@@ -17,11 +17,19 @@ async function loadDashboard() {
         renderDimensionBars(statsData);
         renderRecentEvaluations(statsData.recent_evaluations || []);
 
-        // Create/update charts
-        createRadarChart('chart-radar', statsData);
-        createDoughnutChart('chart-doughnut', statsData.quality_distribution || {});
-        createTrendsChart('chart-trends', trendsData.trends || []);
-        createHistogramChart('chart-histogram', statsData.score_distribution || {});
+        // Create/update charts (only if canvas exists in DOM)
+        if (document.getElementById('chart-radar')) {
+            createRadarChart('chart-radar', statsData);
+        }
+        if (document.getElementById('chart-doughnut')) {
+            createDoughnutChart('chart-doughnut', statsData.quality_distribution || {});
+        }
+        if (document.getElementById('chart-trends')) {
+            createTrendsChart('chart-trends', trendsData.trends || []);
+        }
+        if (document.getElementById('chart-histogram')) {
+            createHistogramChart('chart-histogram', statsData.score_distribution || {});
+        }
 
         dashboardLoaded = true;
     } catch (error) {

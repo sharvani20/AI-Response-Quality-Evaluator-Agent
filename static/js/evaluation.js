@@ -197,6 +197,12 @@ function clearEvalForm() {
     if (rc) rc.textContent = '0 characters';
     if (refc) refc.textContent = '0 characters';
 
+    // Clear document badge and file input
+    const docBadge = document.getElementById('eval-doc-badge');
+    const fileInput = document.getElementById('eval-doc-upload');
+    if (docBadge) docBadge.style.display = 'none';
+    if (fileInput) fileInput.value = '';
+
     if (q) {
         q.focus();
         q.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -204,8 +210,72 @@ function clearEvalForm() {
     showToast('Form cleared. Ready for next evaluation.', 'info');
 }
 
+// ---- Document Upload Handler ----
+function initDocUpload() {
+    const fileInput = document.getElementById('eval-doc-upload');
+    const docBadge = document.getElementById('eval-doc-badge');
+    const docName = document.getElementById('eval-doc-name');
+    const docRemove = document.getElementById('eval-doc-remove');
+    const refTextarea = document.getElementById('eval-reference');
+    const refCount = document.getElementById('reference-count');
+    const btnText = document.getElementById('doc-btn-text');
+
+    if (!fileInput) return;
+
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (btnText) btnText.textContent = 'Reading...';
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const res = await fetch('/api/upload-document', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.detail || `Upload failed with status ${res.status}`);
+            }
+
+            const data = await res.json();
+            if (refTextarea) {
+                refTextarea.value = data.text;
+            }
+            if (refCount) {
+                refCount.textContent = `${data.char_count} characters`;
+            }
+            if (docBadge && docName) {
+                docName.textContent = `${data.filename} (${data.char_count.toLocaleString()} chars)`;
+                docBadge.style.display = 'inline-flex';
+            }
+            showToast(`Loaded "${data.filename}" (${data.char_count} chars)`, 'success');
+        } catch (error) {
+            showToast(`Failed to read document: ${error.message}`, 'error');
+            fileInput.value = '';
+        } finally {
+            if (btnText) btnText.textContent = 'Upload Document';
+        }
+    });
+
+    if (docRemove) {
+        docRemove.addEventListener('click', () => {
+            if (refTextarea) refTextarea.value = '';
+            if (refCount) refCount.textContent = '0 characters';
+            if (docBadge) docBadge.style.display = 'none';
+            if (fileInput) fileInput.value = '';
+            showToast('Document removed.', 'info');
+        });
+    }
+}
+
 // ---- Form Submission ----
 function initEvalForm() {
+    initDocUpload();
     const form = document.getElementById('eval-form');
     if (!form) return;
 

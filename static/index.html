@@ -97,8 +97,24 @@
                                 <span class="char-count" id="response-count">0 characters</span>
                             </div>
                             <div class="form-group">
-                                <label for="eval-reference">Reference Answer / Source Document <span class="optional">(optional)</span></label>
-                                <textarea id="eval-reference" name="reference" rows="4" placeholder="Provide a reference answer or source document for accuracy and hallucination checking..."></textarea>
+                                <div class="label-with-action">
+                                    <label for="eval-reference" style="margin-bottom:0;">Reference Answer / Source Document <span class="optional">(optional)</span></label>
+                                    <label for="eval-doc-upload" class="doc-upload-btn" id="eval-doc-btn" title="Upload a document (.txt, .md, .pdf, .csv, .json)">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                        <span id="doc-btn-text">Upload Document</span>
+                                    </label>
+                                    <input type="file" id="eval-doc-upload" accept=".txt,.md,.pdf,.csv,.json" style="display:none;">
+                                </div>
+                                <div id="eval-doc-badge" class="doc-badge" style="display:none;">
+                                    <span class="doc-badge-icon">📄</span>
+                                    <span class="doc-badge-name" id="eval-doc-name"></span>
+                                    <button type="button" class="doc-badge-remove" id="eval-doc-remove" title="Remove uploaded document">&times;</button>
+                                </div>
+                                <textarea id="eval-reference" name="reference" rows="4" placeholder="Provide a reference answer, paste source text, or click 'Upload Document' above to upload a file..."></textarea>
                                 <span class="char-count" id="reference-count">0 characters</span>
                             </div>
                             <div class="form-actions">
@@ -332,7 +348,7 @@
                     </div>
                 </div>
 
-                <!-- Row 2: 4 charts in 2x2 grid -->
+                <!-- Row 2: 2 Best Charts (Dimension Breakdown Radar & Quality Distribution Doughnut) -->
                 <div class="charts-grid-compact">
                     <div class="glass-card chart-card-sm">
                         <h3 class="card-title-sm">Dimension Breakdown</h3>
@@ -341,14 +357,6 @@
                     <div class="glass-card chart-card-sm">
                         <h3 class="card-title-sm">Quality Distribution</h3>
                         <div class="chart-container-sm"><canvas id="chart-doughnut"></canvas></div>
-                    </div>
-                    <div class="glass-card chart-card-sm">
-                        <h3 class="card-title-sm">Score Trends</h3>
-                        <div class="chart-container-sm"><canvas id="chart-trends"></canvas></div>
-                    </div>
-                    <div class="glass-card chart-card-sm">
-                        <h3 class="card-title-sm">Score Distribution</h3>
-                        <div class="chart-container-sm"><canvas id="chart-histogram"></canvas></div>
                     </div>
                 </div>
 
