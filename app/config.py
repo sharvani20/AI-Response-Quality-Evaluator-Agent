@@ -5,9 +5,20 @@ from typing import Optional
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
-    # Groq API
+    # LLM API — supports both Groq and OpenAI
+    # For Groq: set GROQ_API_KEY
+    # For OpenAI: set OPENAI_API_KEY
     GROQ_API_KEY: str = ""
-    MODEL_NAME: str = "llama-3.3-70b-versatile"
+    OPENAI_API_KEY: str = ""
+
+    # LLM Provider: "groq" or "openai"
+    LLM_PROVIDER: str = "groq"
+
+    # Model names
+    # Groq options:  "llama3-70b-8192", "mixtral-8x7b-32768", "gemma2-9b-it"
+    # OpenAI options: "gpt-4o-mini", "gpt-3.5-turbo", "gpt-4o"
+    MODEL_NAME: str = "llama3-70b-8192"
+
     MAX_TOKENS: int = 1024
     TEMPERATURE: float = 0.3
 
