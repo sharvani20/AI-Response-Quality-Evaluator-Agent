@@ -78,11 +78,18 @@ function renderResults(data) {
 
     let html = `
         <div class="verdict-card animate-in">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 0.75rem;">
+                <span class="tier-badge ${tierClass}">${data.quality_tier || 'N/A'}</span>
+                <button type="button" class="btn-secondary" onclick="clearEvalForm()" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" title="Clear form to evaluate another question">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    New Evaluation
+                </button>
+            </div>
             <div class="verdict-score-ring">
                 ${createScoreRing(overallScore, 120, 7, '2rem')}
-            </div>
-            <div>
-                <span class="tier-badge ${tierClass}">${data.quality_tier || 'N/A'}</span>
             </div>
             <div class="verdict-reasoning">${data.verdict_reasoning || ''}</div>
     `;
@@ -174,10 +181,38 @@ function renderResults(data) {
     animateScoreRings();
 }
 
+// ---- Clear / New Evaluation Form ----
+function clearEvalForm() {
+    const q = document.getElementById('eval-question');
+    const r = document.getElementById('eval-response');
+    const ref = document.getElementById('eval-reference');
+    if (q) q.value = '';
+    if (r) r.value = '';
+    if (ref) ref.value = '';
+
+    const qc = document.getElementById('question-count');
+    const rc = document.getElementById('response-count');
+    const refc = document.getElementById('reference-count');
+    if (qc) qc.textContent = '0 characters';
+    if (rc) rc.textContent = '0 characters';
+    if (refc) refc.textContent = '0 characters';
+
+    if (q) {
+        q.focus();
+        q.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    showToast('Form cleared. Ready for next evaluation.', 'info');
+}
+
 // ---- Form Submission ----
 function initEvalForm() {
     const form = document.getElementById('eval-form');
     if (!form) return;
+
+    const clearBtn = document.getElementById('eval-clear');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearEvalForm);
+    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -302,6 +337,27 @@ async function loadEvalDetail(evalId) {
         const loading = document.getElementById('eval-loading');
         if (loading) loading.style.display = 'none';
         if (results) results.style.display = 'block';
+
+        // Also populate form fields so user can view/reuse the evaluated data
+        const q = document.getElementById('eval-question');
+        const r = document.getElementById('eval-response');
+        const ref = document.getElementById('eval-reference');
+        if (q && data.question) {
+            q.value = data.question;
+            const qc = document.getElementById('question-count');
+            if (qc) qc.textContent = `${data.question.length} characters`;
+        }
+        if (r && data.ai_response) {
+            r.value = data.ai_response;
+            const rc = document.getElementById('response-count');
+            if (rc) rc.textContent = `${data.ai_response.length} characters`;
+        }
+        if (ref) {
+            ref.value = data.reference || '';
+            const refc = document.getElementById('reference-count');
+            if (refc) refc.textContent = `${(data.reference || '').length} characters`;
+        }
+
         renderResults(data);
     } catch (error) {
         showToast(`Failed to load evaluation: ${error.message}`, 'error');

@@ -101,13 +101,22 @@
                                 <textarea id="eval-reference" name="reference" rows="4" placeholder="Provide a reference answer or source document for accuracy and hallucination checking..."></textarea>
                                 <span class="char-count" id="reference-count">0 characters</span>
                             </div>
-                            <button type="submit" class="btn-primary" id="eval-submit">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                                    <path d="M22 2L11 13"/>
-                                    <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
-                                </svg>
-                                Run Evaluation
-                            </button>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary" id="eval-submit">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M22 2L11 13"/>
+                                        <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+                                    </svg>
+                                    Run Evaluation
+                                </button>
+                                <button type="button" class="btn-secondary" id="eval-clear" title="Clear inputs to start a new evaluation">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <polyline points="1 4 1 10 7 10"/>
+                                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                                    </svg>
+                                    Clear Form
+                                </button>
+                            </div>
                         </form>
                     </div>
 
